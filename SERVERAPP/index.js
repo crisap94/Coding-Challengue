@@ -4,7 +4,7 @@ var Server = require('ws').Server;
 var listeningPort = 27877;
 var wsReceive = new Server({ port: listeningPort });
 
-var writingPort = 27878;
+var writingPort = 27878; 
 var wsSend = new Server({ port: writingPort });
 
 var sum = 0;
