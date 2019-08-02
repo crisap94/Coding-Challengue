@@ -1,10 +1,8 @@
-Coding Challengue
-
 **CHALLENGE 2**
 
 Given an array of integers with length N. An array element is peak if it is NOT smaller than its neighbors. An array element is valley if it is NOT greater than its neighbors. For corner elements, we need to consider only one neighbor. For example, for input array {5, 10, 20, 15}, 20 is the only peak element and 5 and 15 are valleys. For input array {10, 20, 15, 2, 23, 90, 67}, there are two peak elements: 20 and 90 and 3 valleys, 10, 2 and 67. We need to return the total number of peaks and valleys.
 
-               0<= length(array) <= 500
+                                        0<= length(array) <= 500
  
 For the solution feel free to choose the programming language you want. You can use any or output mechanism for the program data. 
 
@@ -21,7 +19,7 @@ Extra points:
 
 Suppose you have a database with two tables:
 
- ![Data Base](BD.png)
+                               ![Data Base](BD.png)
 
 Write the SQL statement that shows the name of the women who have pets in Bogotá.
 
