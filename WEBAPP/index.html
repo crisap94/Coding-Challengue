@@ -9,29 +9,7 @@
 <body>
      <div class="wrapper">
           <div id="chart"></div>
-          <script>
-               function getData() {
-                    return Math.random() * 100;
-               }
-
-               Plotly.plot('chart', [{
-                    y: [getData()],
-                    type: 'line'
-               }]);
-
-               var cnt = 0;
-               setInterval(function () {
-                    Plotly.extendTraces('chart', { y: [[getData()]] }, [0]);
-                    cnt++;
-                    if (cnt > 200) {
-                         Plotly.relayout('chart', {
-                              xaxis: {
-                                   range: [cnt - 200, cnt]
-                              }
-                         });
-                    }
-               }, 1000);
-          </script>
+          <script src="main.js"></script>
      </div>
 </body>
 
