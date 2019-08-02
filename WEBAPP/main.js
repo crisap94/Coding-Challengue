@@ -1,5 +1,9 @@
 var data = 0;
 
+var dataArray = [];
+var timeArray = [];
+
+var counter = 0;
 
 var sendConnection = new WebSocket('ws://localhost:27877');
 
@@ -43,26 +47,43 @@ receiveConnection.onerror = function (error) {
 receiveConnection.onmessage = function (e) {
      console.log('message from server on Listening Socket', e.data);
      data = e.data;
+
+     dataArray.push(e.data);
+     
 };
-
-
-
-Plotly.plot('chart', [{
-     y: [data],
-     type: 'line'
-}]);
 
 
 var cnt = 0;
 setInterval(function () {
-     Plotly.extendTraces('chart', { y: [[data]] }, [0]);
+     chart.update();
+
      data = 0;
      cnt++;
-     if (cnt > 200) {
-          Plotly.relayout('chart', {
-               xaxis: {
-                    range: [cnt - 200, cnt]
-               }
-          });
+     if (cnt > 20) {
+          dataArray.shift();
+          timeArray.shift()
+          timeArray.push(cnt);
+     }else{
+          timeArray.push(cnt);
      }
+
 }, 1000);
+
+var chart = new Chart(document.getElementById("line-chart"), {
+     type: 'line',
+     data: {
+          labels: timeArray,
+          datasets: [{
+               data: dataArray,
+               label: "Africa",
+               borderColor: "#3e95cd",
+               fill: false}
+          ]
+     },
+     options: {
+          title: {
+               display: true,
+               text: 'Connected Clients'
+          }
+     }
+});

@@ -8,7 +8,7 @@ var writingPort = 27878;
 var wsSend = new Server({ port: writingPort });
 
 var sum = 0; 
-var counter = 0;
+var counter = 0; 
 
 wsReceive.on('connection', function (w) {
 
