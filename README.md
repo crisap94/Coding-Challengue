@@ -19,7 +19,7 @@ Extra points:
 
 Suppose you have a database with two tables:
 
-                               ![Data Base](BD.png)
+![Data Base](BD.png)
 
 Write the SQL statement that shows the name of the women who have pets in Bogotá.
 
