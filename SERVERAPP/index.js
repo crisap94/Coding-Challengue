@@ -7,16 +7,21 @@ var wsReceive = new Server({ port: listeningPort });
 var writingPort = 27878;
 var wsSend = new Server({ port: writingPort });
 
-var sum = 0; 
-var counter = 0; 
+var sum = 0;
+var counter = 0;
 
 wsReceive.on('connection', function (w) {
 
      console.info(`Client Connected on Receiving Socket`);
 
      w.on('message', function (msg) {
-          sum += parseInt(msg);
-          counter++;
+          if (parseInt(msg) == "NaN" || (parseInt(msg) < 0 && parseInt(msg) > 20)) {
+               w.close();
+          } else {
+               sum += parseInt(msg);
+               counter++;
+          }
+
      });
 
      w.on('close', function () {
@@ -25,7 +30,7 @@ wsReceive.on('connection', function (w) {
 
 });
 
-wsSend.on('connection', function (w) { 
+wsSend.on('connection', function (w) {
 
      console.info(`Client Connected on Sending Socket`);
 
@@ -37,8 +42,8 @@ wsSend.on('connection', function (w) {
           console.log('closing connection');
      });
 
-     setInterval(() => { 
-          if(sum != 0){
+     setInterval(() => {
+          if (sum != 0) {
                w.send(sum);
                console.info(` Data/s ${counter}`)
                counter = 0;
@@ -46,8 +51,7 @@ wsSend.on('connection', function (w) {
           }
           //console.info(`Sum: ${sum}`);
      }, 1000);
- 
-});  
- 
 
- 
+});
+
+

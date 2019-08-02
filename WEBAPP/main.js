@@ -26,7 +26,8 @@ function randomData() {
 }
 
 setInterval(() => {
-     sendConnection.send(randomData());
+     let value = randomData();
+     sendConnection.send(value);
 }, 150)
 
 
@@ -55,17 +56,16 @@ receiveConnection.onmessage = function (e) {
 
 var cnt = 0;
 setInterval(function () {
-     chart.update();
-
+     
      data = 0;
      cnt++;
      if (cnt > 20) {
-          dataArray.shift();
           timeArray.shift()
-          timeArray.push(cnt);
-     }else{
-          timeArray.push(cnt);
+          dataArray.shift();
      }
+     timeArray.push(cnt);
+     
+     chart.update();
 
 }, 1000);
 
@@ -75,7 +75,7 @@ var chart = new Chart(document.getElementById("line-chart"), {
           labels: timeArray,
           datasets: [{
                data: dataArray,
-               label: "Africa",
+               label: "client",
                borderColor: "#3e95cd",
                fill: false}
           ]
