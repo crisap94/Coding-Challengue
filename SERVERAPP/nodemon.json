@@ -1,0 +1,12 @@
+{
+     "watch": [
+          "index.ts"
+     ],
+     "ext": "ts",
+     "ignore": [
+          "*.test.ts",
+          "node_modules"
+     ],
+     "delay": "3",
+     "exec": "npx ts-node index.ts"
+}
