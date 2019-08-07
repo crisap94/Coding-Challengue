@@ -42,8 +42,8 @@ var chart = new Chart(ctx, {
 
 
 type dataset = {
-     data: number[],
      label: string,
+     data: number[],
      borderColor: string,
      fill: boolean
 };
@@ -85,6 +85,7 @@ function randomData() {
 }
 
 setInterval(() => {
+
      let payload:clientsRandomData = {
           id: MyID,
           value:randomData()
@@ -101,8 +102,9 @@ setInterval(() => {
 
      if (receiveConnection.readyState == WebSocket.CLOSED) {
           console.info(`Attempting to connect to server`);
-          receiveConnection = new WebSocket(SENDING_SOCKET_URL);
+          receiveConnection = new WebSocket(RECEIVING_SOCKET_URL);
      }
+
 }, 150)
 
 
@@ -136,11 +138,16 @@ receiveConnection.onmessage = function (e) {
                addClient(data);
           }else{
                let client:clientSchema = findClient(data);
+               client.lastEntry = Date.now();
                client.dataset.data.push(data.value);
-               datasets.push(client.dataset);
+               console.log(client.dataset)
           }
      }
 };
+
+// ────────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
+
 
 function checkJsonType(payload: string): boolean {
      try {
@@ -175,7 +182,7 @@ function addClient(newClient: clientsRandomData) {
           lastEntry: Date.now(),
           dataset: {
                borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
-               data: [],
+               data: [newClient.value],
                label: `Client ${clients.length}`,
                fill: false
           }
@@ -196,7 +203,7 @@ function rebuildDatasets(){
      datasets = [];
      for (let index = 0; index < clients.length; index++) {
           const client:clientSchema = clients[index];
-          datasets.push(client.dataset);
+          datasets[index] = client.dataset;
      }
 }
 
@@ -216,7 +223,7 @@ function shiftAllClientsData(){
      }
 }
 
-setInterval(()=>{
+/* setInterval(()=>{
      for (let index = 0; index < clients.length; index++) {
           const client = clients[index];
           if(client.dataset.data.length < timeArray.length){
@@ -225,7 +232,7 @@ setInterval(()=>{
                }
           }
      }
-},100)
+},100) */
 
 // ────────────────────────────────────────────────────────────────────────────────
 // ────────────────────────────────────────────────────────────────────────────────
@@ -240,14 +247,15 @@ setInterval(() => {
 
      cnt++;
 
-     rebuildDatasets();
+     //rebuildDatasets();
+     
+     timeArray.push(cnt);
 
      if (cnt > 20) {
           timeArray.shift()
           shiftAllClientsData();
      }
 
-     timeArray.push(cnt);
 
      removeClientAfter5Secs();
 

@@ -53,7 +53,7 @@ setInterval(function () {
     }
     if (receiveConnection.readyState == WebSocket.CLOSED) {
         console.info("Attempting to connect to server");
-        receiveConnection = new WebSocket(SENDING_SOCKET_URL);
+        receiveConnection = new WebSocket(RECEIVING_SOCKET_URL);
     }
 }, 150);
 // ────────────────────────────────────────────────────────────────────────────────
@@ -80,11 +80,14 @@ receiveConnection.onmessage = function (e) {
         }
         else {
             var client = findClient(data);
+            client.lastEntry = Date.now();
             client.dataset.data.push(data.value);
-            datasets.push(client.dataset);
+            console.log(client.dataset);
         }
     }
 };
+// ────────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 function checkJsonType(payload) {
     try {
         var json = JSON.parse(payload);
@@ -112,7 +115,7 @@ function addClient(newClient) {
         lastEntry: Date.now(),
         dataset: {
             borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
-            data: [],
+            data: [newClient.value],
             label: "Client " + clients.length,
             fill: false
         }
@@ -130,7 +133,7 @@ function rebuildDatasets() {
     datasets = [];
     for (var index = 0; index < clients.length; index++) {
         var client = clients[index];
-        datasets.push(client.dataset);
+        datasets[index] = client.dataset;
     }
 }
 function findClient(data) {
@@ -147,16 +150,16 @@ function shiftAllClientsData() {
         client.dataset.data.shift();
     }
 }
-setInterval(function () {
-    for (var index = 0; index < clients.length; index++) {
-        var client = clients[index];
-        if (client.dataset.data.length < timeArray.length) {
-            if (client.dataset.borderColor != "#FF0000") {
-                client.dataset.borderColor = "#FF0000";
-            }
-        }
-    }
-}, 100);
+/* setInterval(()=>{
+     for (let index = 0; index < clients.length; index++) {
+          const client = clients[index];
+          if(client.dataset.data.length < timeArray.length){
+               if (client.dataset.borderColor != "#FF0000"){
+                    client.dataset.borderColor = `#FF0000`;
+               }
+          }
+     }
+},100) */
 // ────────────────────────────────────────────────────────────────────────────────
 // ────────────────────────────────────────────────────────────────────────────────
 //
@@ -165,12 +168,12 @@ setInterval(function () {
 var cnt = 0;
 setInterval(function () {
     cnt++;
-    rebuildDatasets();
+    //rebuildDatasets();
+    timeArray.push(cnt);
     if (cnt > 20) {
         timeArray.shift();
         shiftAllClientsData();
     }
-    timeArray.push(cnt);
     removeClientAfter5Secs();
     chart.update();
 }, 1000);

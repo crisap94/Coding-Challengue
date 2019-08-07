@@ -3,7 +3,7 @@ import * as path from 'path'
 
 var app = express();
 
-let port = 3000 || process.env;
+let port = 80 || process.env;
 
 app.use(express.static('public'));
 

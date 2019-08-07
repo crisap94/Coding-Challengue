@@ -1,5 +1,20 @@
 // server.js
-import * as WebSocket from "ws"
+
+//
+// ────────────────────────────────────────────────────── I ──────────
+//   :::::: I M P O R T S : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────────
+//
+
+
+import * as WebSocket from "ws";
+
+//
+// ────────────────────────────────────────────────────────────────────────── II ──────────
+//   :::::: W E B S O C K E T   I N S T A N C E S : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────────────────────────────────
+//
+
 
 var listeningPort = 27877;
 var wsReceive = new WebSocket.Server({ port: listeningPort });
@@ -10,6 +25,11 @@ var wsSend = new WebSocket.Server({ port: writingPort });
 let clients: clientSchema[] = [];
 
 let previusClientData: clientsRandomData[] = [];
+
+
+// ────────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
+
 
 //
 // ─── TYPES ──────────────────────────────────────────────────────────────────────
@@ -28,17 +48,26 @@ type clientSchema = {
 // ────────────────────────────────────────────────────────────────────────────────
 
 
-
+/**
+ * * Function in charge of handling the incoming connection
+ */
 wsReceive.on('connection', (socket) => {
 
      console.info(`Client Connected on Receiving Socket`);
 
+     /**
+      * * In charge of handling the incoming messages
+      */
      socket.on('message', (msg) => {
 
           var payload: clientsRandomData = JSON.parse(String(msg))
 
           //console.info(payload);
 
+          /**
+           * ? Validate the Data
+           * 
+           */
           if (payload.value < 0 || payload.value > 20) {
                console.info(`Client ${payload.id} exceeded data range`);
                console.info(`Closing Connection`);
@@ -48,7 +77,6 @@ wsReceive.on('connection', (socket) => {
                     addClient(payload, socket);
                } else {
                     findClient(payload).data.value += payload.value;
-                    updatePreviusValue(payload)
                }
           }
 
@@ -57,7 +85,7 @@ wsReceive.on('connection', (socket) => {
      socket.on('close', () => {
           console.log('closing connection');
 
-     });
+     }); 
 
 });
 
@@ -67,14 +95,19 @@ wsSend.on('connection', function (socket) {
 
      socket.on('close', () => {
           console.log('closing connection');
-     });
+     }); 
 
      setInterval(() => {
+          console.info(`Clients: ${clients.length}`);
           for (let index = 0; index < clients.length; index++) {
                const client = clients[index];
+               console.log(client.data);
+          }
+          for (let index = 0; index < clients.length; index++) {
+               const client = clients[index];
+               updatePreviusValue(clients[index].data)
                socket.send(JSON.stringify(clients[index].data));
           }
-
           cleanClientsValues();
      }, 1000);
 
@@ -109,22 +142,21 @@ setInterval(() => {// * Remove Client after 5 Seconds
 }, 1000)
 
 function addClient(client: clientsRandomData, newSocket: WebSocket) {
-     console.info(`Adding New Client ${client.id}`);
+     //console.info(`Adding New Client ${client.id}`);
      clients.push({
           data: client,
           socket: newSocket
      });
 
-     previusClientData.push({
-          id: client.id,
-          value: client.value
-     })
+     previusClientData.push(client)
 }
 
 
 function cleanClientsValues() {
      clients.forEach(client => {
-          client.data.value = 0;
+          if (client.data.value>100){
+               client.data.value = 0;
+          }
      });
 }
 
